@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎓 Chúc Mừng Lễ Tốt Nghiệp!</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #ffe066;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .typing-text {
+      font-size: 1.5rem;
+      max-width: 600px;
+      margin: 1rem auto;
+      min-height: 60px;
+      color: #f1f1f1;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2.2rem;
+      }
+      .typing-text {
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fireworks"></canvas>
+  <div class="container">
+    <h1>🎓 Chúc Mừng Tốt Nghiệp!</h1>
+    <div class="typing-text" id="message"></div>
+    <div class="footer">Từ anh trai yêu thương ❤️</div>
+  </div>
+
+  <script>
+    // Typing effect
+    const message = "Em gái thân yêu, chúc mừng em đã hoàn thành một chặng đường đáng nhớ!\nHãy tự tin bước tiếp trên con đường phía trước, vì em xứng đáng với những điều tuyệt vời nhất.";
+    const target = document.getElementById("message");
+    let index = 0;
+
+    function typeWriter() {
+      if (index < message.length) {
+        target.innerHTML += message.charAt(index) === "\n" ? "<br>" : message.charAt(index);
+        index++;
+        setTimeout(typeWriter, 50);
+      }
+    }
+    typeWriter();
+
+    // Fireworks effect using canvas
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createFirework(x, y) {
+      const count = 100;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          radius: 2,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          speed: random(1, 5),
+          angle: random(0, Math.PI * 2),
+          opacity: 1,
+          decay: random(0.01, 0.02)
+        });
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((p, index) => {
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+        p.opacity -= p.decay;
+
+        if (p.opacity <= 0) {
+          particles.splice(index, 1);
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${hexToRgb(p.color)}, ${p.opacity})`;
+          ctx.fill();
+        }
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    function hexToRgb(hsl) {
+      const temp = document.createElement("div");
+      temp.style.color = hsl;
+      document.body.appendChild(temp);
+      const rgb = getComputedStyle(temp).color;
+      document.body.removeChild(temp);
+      return rgb.match(/\d+/g).join(",");
+    }
+
+    setInterval(() => {
+      const x = Math.random() * canvas.width;
+      const y = Math.random() * canvas.height / 2;
+      createFirework(x, y);
+    }, 800);
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
